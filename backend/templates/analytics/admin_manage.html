@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block title %}后台管理 - JBOOK{% endblock %}
+{% block content %}
+<div class="container">
+  <h3 class="mb-4">JBOOK 后台管理</h3>
+  <div class="row g-4">
+    <div class="col-lg-6">
+      <div class="card p-3">
+        <h5>用户管理</h5>
+        <table class="table table-sm">
+          <thead><tr><th>ID</th><th>账号</th><th>状态</th><th></th></tr></thead>
+          <tbody>
+            {% for u in users %}
+            <tr>
+              <td>{{ u.user_id }}</td><td>{{ u.username }}</td>
+              <td>{% if u.is_active %}<span class="badge bg-success">正常</span>{% else %}<span class="badge bg-secondary">禁用</span>{% endif %}</td>
+              <td>
+                {% if not u.is_admin %}
+                <form method="post" action="{% url 'toggle_user' u.user_id %}">{% csrf_token %}
+                  <button class="btn btn-sm btn-outline-warning">切换状态</button>
+                </form>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="card p-3">
+        <h5>类目管理</h5>
+        <form method="post" class="mb-3">{% csrf_token %}<input type="hidden" name="action" value="add_category">
+          <div class="input-group input-group-sm">
+            <input name="cat_name" class="form-control" placeholder="新类目名" required>
+            <button class="btn btn-primary">添加</button>
+          </div>
+        </form>
+        <ul class="list-group list-group-flush">
+          {% for c in categories %}
+          <li class="list-group-item d-flex justify-content-between">
+            {{ c.cat_name }}
+            <form method="post">{% csrf_token %}<input type="hidden" name="action" value="delete_category">
+              <input type="hidden" name="cat_id" value="{{ c.cat_id }}">
+              <button class="btn btn-sm btn-outline-danger">删</button>
+            </form>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    <div class="col-12">
+      <div class="card p-3">
+        <div class="d-flex justify-content-between">
+          <h5>Book-Crossing 数据同步</h5>
+          <form method="post" action="{% url 'trigger_crawler' %}">{% csrf_token %}
+            <button class="btn btn-sm btn-primary">下载/更新 CSV</button>
+          </form>
+        </div>
+        <table class="table table-sm mt-2">
+          <thead><tr><th>时间</th><th>状态</th><th>说明</th></tr></thead>
+          <tbody>
+            {% for log in crawler_logs %}
+            <tr><td>{{ log.started_at }}</td><td>{{ log.status }}</td><td class="small">{{ log.message|truncatechars:80 }}</td></tr>
+            {% empty %}<tr><td colspan="3">暂无日志</td></tr>{% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

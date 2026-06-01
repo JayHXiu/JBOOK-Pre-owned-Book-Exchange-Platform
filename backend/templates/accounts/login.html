@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}登录 - JBOOK{% endblock %}
+{% block content %}
+<div class="container col-md-5">
+  <div class="card p-4 shadow-sm auth-card">
+    <h4 class="mb-3">登录 JBOOK</h4>
+    <form method="post" id="loginForm" novalidate>{% csrf_token %}
+      <div class="mb-3">
+        <label class="form-label">账号</label>
+        <input name="username" class="form-control" required minlength="3" autocomplete="username">
+        <div class="invalid-feedback">请输入账号</div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">密码</label>
+        <input type="password" name="password" class="form-control" required minlength="6" autocomplete="current-password">
+      </div>
+      <div class="mb-3 form-check">
+        <input type="checkbox" name="remember" class="form-check-input" id="remember">
+        <label class="form-check-label" for="remember">记住登录（14天）</label>
+      </div>
+      <button type="submit" class="btn btn-primary w-100">登录</button>
+    </form>
+    <p class="mt-3 mb-0 text-center small">
+      <a href="{% url 'register' %}">注册</a> · <a href="{% url 'forgot_password' %}">找回密码</a>
+    </p>
+  </div>
+</div>
+{% endblock %}

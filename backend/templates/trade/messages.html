@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}私信 - JBOOK{% endblock %}
+{% block content %}
+<div class="container chat-layout">
+  <h4 class="mb-3">私信</h4>
+  <div class="row g-0 card shadow-sm overflow-hidden">
+    <div class="col-md-4 border-end chat-threads">
+      {% for t in threads %}
+      <a href="?with={{ t.other.user_id }}{% if t.sell %}&sell_id={{ t.sell.sell_id }}{% endif %}"
+         class="chat-thread-item d-block text-decoration-none text-dark {% if active_partner and active_partner.user_id == t.other.user_id %}active{% endif %}">
+        <strong>{{ t.other.nickname }}</strong>
+        {% if t.unread %}<span class="badge bg-danger">{{ t.unread }}</span>{% endif %}
+        <div class="small text-muted text-truncate">{{ t.last.content }}</div>
+      </a>
+      {% empty %}<p class="p-3 text-muted">暂无会话</p>{% endfor %}
+    </div>
+    <div class="col-md-8 p-3">
+      {% if active_partner %}
+      <h6>与 {{ active_partner.nickname }} 的对话 {% if active_sell %}· {{ active_sell.book.book_name }}{% endif %}</h6>
+      <div id="chatMessages" class="chat-messages mb-3">
+        {% for m in chat_messages %}
+        <div class="chat-bubble {% if m.sender_id == request.session.user_id %}me{% else %}other{% endif %}">
+          {{ m.content }}
+          <div class="small opacity-75">{{ m.create_time|date:"H:i" }}</div>
+        </div>
+        {% endfor %}
+      </div>
+      <form method="post">{% csrf_token %}
+        <input type="hidden" name="receiver_id" value="{{ active_partner.user_id }}">
+        {% if sell_id %}<input type="hidden" name="sell_id" value="{{ sell_id }}">{% endif %}
+        <div class="input-group">
+          <input name="content" class="form-control" placeholder="输入消息..." required>
+          <button class="btn btn-primary">发送</button>
+        </div>
+      </form>
+      {% else %}
+      <div class="empty-state">选择左侧会话开始聊天</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+{% if active_partner %}<script>initMessagePoll('{{ active_partner.user_id }}');</script>{% endif %}
+{% endblock %}

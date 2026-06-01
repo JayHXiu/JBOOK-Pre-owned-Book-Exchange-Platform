@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container col-md-6">
+  <div class="card p-4">
+    <h5>咨询卖家 · {{ sell.book.book_name }}</h5>
+    <form method="post">{% csrf_token %}
+      <textarea name="content" class="form-control mb-3" rows="4" required placeholder="您好，这本书还在吗？"></textarea>
+      <button class="btn btn-primary">发送</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,71 @@
+{
+  "version": "1.0.0",
+  "trained_at": "2026-06-01 15:05",
+  "price": {
+    "selected": "linear_regression",
+    "metrics": {
+      "linear_regression": {
+        "mae": 2.9813,
+        "mse": 11.9008,
+        "r2": 0.1375
+      },
+      "random_forest": {
+        "mae": 3.0545,
+        "mse": 12.5331,
+        "r2": 0.0916
+      }
+    },
+    "best": {
+      "mae": 2.9813,
+      "mse": 11.9008,
+      "r2": 0.1375
+    },
+    "sample_size": 1800
+  },
+  "hot": {
+    "selected": "logistic_regression",
+    "metrics": {
+      "logistic_regression": {
+        "accuracy": 1.0,
+        "f1": 1.0
+      },
+      "knn": {
+        "accuracy": 0.9972,
+        "f1": 0.9972
+      },
+      "random_forest": {
+        "accuracy": 1.0,
+        "f1": 1.0
+      }
+    },
+    "best": {
+      "accuracy": 1.0,
+      "f1": 1.0
+    },
+    "sample_size": 1800
+  },
+  "hyperparams": {
+    "price": {
+      "test_size": 0.2,
+      "random_state": 42,
+      "models": [
+        "linear_regression",
+        "random_forest"
+      ]
+    },
+    "hot": {
+      "test_size": 0.2,
+      "max_iter": 500,
+      "n_neighbors": 5,
+      "models": [
+        "logistic_regression",
+        "knn",
+        "random_forest"
+      ]
+    }
+  },
+  "training_log": [
+    "[2026-06-01 15:05] 价格模型选用 linear_regression，样本 1800 条",
+    "[2026-06-01 15:05] 热度模型选用 logistic_regression，样本 1800 条"
+  ]
+}

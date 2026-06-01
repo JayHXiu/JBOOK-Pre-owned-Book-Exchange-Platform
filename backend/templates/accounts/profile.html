@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block title %}个人中心 - JBOOK{% endblock %}
+{% block content %}
+<div class="container">
+  <h3 class="mb-4">个人中心 · {{ user.nickname }}</h3>
+  <ul class="nav nav-tabs mb-4">
+    <li class="nav-item"><a class="nav-link {% if tab == 'profile' %}active{% endif %}" href="?tab=profile">资料</a></li>
+    <li class="nav-item"><a class="nav-link {% if tab == 'collects' %}active{% endif %}" href="?tab=collects">收藏 {% if my_collects %}({{ my_collects|length }}){% endif %}</a></li>
+    <li class="nav-item"><a class="nav-link {% if tab == 'orders' %}active{% endif %}" href="?tab=orders">订单</a></li>
+    <li class="nav-item"><a class="nav-link {% if tab == 'sells' %}active{% endif %}" href="?tab=sells">我发布的</a></li>
+    <li class="nav-item"><a class="nav-link {% if tab == 'history' %}active{% endif %}" href="?tab=history">浏览记录</a></li>
+  </ul>
+
+  {% if tab == 'profile' or not tab %}
+  <div class="card p-4 col-lg-6">
+    <form method="post">{% csrf_token %}<input type="hidden" name="form_type" value="profile">
+      <div class="mb-3"><label>昵称</label><input name="nickname" class="form-control" value="{{ user.nickname }}"></div>
+      <div class="mb-3"><label>原密码</label><input type="password" name="old_password" class="form-control"></div>
+      <div class="mb-3"><label>新密码</label><input type="password" name="new_password" class="form-control"></div>
+      <button class="btn btn-primary">保存</button>
+    </form>
+    <p class="small text-muted mt-3">未读私信: {{ unread_messages }}</p>
+  </div>
+  {% endif %}
+
+  {% if tab == 'collects' %}
+  <form method="post" action="{% url 'collect_batch_remove' %}">{% csrf_token %}
+    <div class="row g-3">
+      {% for c in my_collects %}
+      <div class="col-md-4">
+        <div class="card p-2">
+          <input type="checkbox" name="collect_ids" value="{{ c.collect_id }}" class="form-check-input me-2">
+          <a href="{% url 'book_detail' c.sell.sell_id %}">{{ c.sell.book.book_name }}</a>
+          <span class="text-danger">¥{{ c.sell.second_price }}</span>
+        </div>
+      </div>
+      {% empty %}<div class="empty-state col-12">暂无收藏</div>{% endfor %}
+    </div>
+    {% if my_collects %}<button class="btn btn-outline-danger btn-sm mt-3">批量取消收藏</button>{% endif %}
+  </form>
+  {% endif %}
+
+  {% if tab == 'orders' %}
+  <div class="mb-2">
+    <a href="?tab=orders" class="btn btn-sm {% if order_status == None or order_status == '' %}btn-primary{% else %}btn-outline-primary{% endif %}">全部</a>
+    <a href="?tab=orders&status=0" class="btn btn-sm {% if order_status == '0' %}btn-primary{% else %}btn-outline-secondary{% endif %}">待沟通</a>
+    <a href="?tab=orders&status=1" class="btn btn-sm {% if order_status == '1' %}btn-primary{% else %}btn-outline-secondary{% endif %}">沟通中</a>
+    <a href="?tab=orders&status=2" class="btn btn-sm {% if order_status == '2' %}btn-primary{% else %}btn-outline-secondary{% endif %}">待交易</a>
+    <a href="?tab=orders&status=3" class="btn btn-sm {% if order_status == '3' %}btn-primary{% else %}btn-outline-secondary{% endif %}">已完成</a>
+  </div>
+  <table class="table">
+    <thead><tr><th>订单号</th><th>图书</th><th>价格</th><th>状态</th></tr></thead>
+    <tbody>
+      {% for o in my_orders_buy %}
+      <tr>
+        <td>{{ o.order_id }}</td><td>{{ o.sell.book.book_name }}</td><td>¥{{ o.deal_price }}</td>
+        <td><span class="badge order-status-{{ o.order_status }}">{{ o.get_order_status_display }}</span></td>
+      </tr>
+      {% empty %}<tr><td colspan="4">暂无订单</td></tr>{% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+
+  {% if tab == 'sells' %}
+  <table class="table">
+    <thead><tr><th>图书</th><th>价格</th><th>状态</th><th>审核</th><th></th></tr></thead>
+    <tbody>
+      {% for s in my_sells %}
+      <tr>
+        <td>{{ s.book.book_name }}</td><td>¥{{ s.second_price }}</td>
+        <td>{% if s.status == 1 %}在售{% else %}下架{% endif %}</td>
+        <td>{% if s.audit_status == 0 %}待审{% elif s.audit_status == 1 %}通过{% else %}驳回{% endif %}</td>
+        <td><a href="{% url 'sell_edit' s.sell_id %}">编辑</a></td>
+      </tr>
+      {% empty %}<tr><td colspan="5">暂无发布</td></tr>{% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+
+  {% if tab == 'history' %}
+  <div class="list-group">
+    {% for h in browse_history %}
+    <a href="{% url 'book_detail' h.sell.sell_id %}" class="list-group-item list-group-item-action">
+      {{ h.sell.book.book_name }} · ¥{{ h.sell.second_price }} · {{ h.viewed_at|date:"Y-m-d H:i" }}
+    </a>
+    {% empty %}<div class="empty-state">暂无浏览记录</div>{% endfor %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

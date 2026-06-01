@@ -1,0 +1,28 @@
+<div class="col-md-4 col-sm-6">
+  <div class="card book-card h-100">
+    <div class="book-cover-wrap">
+      {% if sell.cover_img %}
+      <img src="{{ sell.cover_img }}" class="card-img-top book-cover lazy-img" alt="{{ sell.book.book_name }}" loading="lazy">
+      {% else %}
+      <div class="book-cover-placeholder"><i class="fa-solid fa-book"></i></div>
+      {% endif %}
+      <span class="status-pill status-on">在售</span>
+    </div>
+    <div class="card-body">
+      <h6 class="card-title text-truncate">{{ sell.book.book_name }}</h6>
+      <p class="text-muted small mb-1">{{ sell.book.author }}</p>
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <span class="price-main">¥{{ sell.second_price }}</span>
+          <small class="text-muted text-decoration-line-through ms-1">¥{{ sell.book.original_price }}</small>
+        </div>
+        {% include 'partials/quality_badge.html' with q=sell.quality %}
+      </div>
+      <div class="d-flex justify-content-between mt-2 small text-muted">
+        <span><i class="fa-regular fa-eye"></i> {{ sell.view_count }}</span>
+        <span><i class="fa-regular fa-heart"></i> {{ sell.collect_count }}</span>
+      </div>
+      <a href="{% url 'book_detail' sell.sell_id %}" class="stretched-link"></a>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}注册 - JBOOK{% endblock %}
+{% block content %}
+<div class="container col-md-5">
+  <div class="card p-4 shadow-sm auth-card">
+    <h4 class="mb-3">注册 JBOOK</h4>
+    <form method="post" id="registerForm" novalidate>{% csrf_token %}
+      <div class="mb-3"><label>账号</label><input name="username" class="form-control" required minlength="3"></div>
+      <div class="mb-3"><label>昵称</label><input name="nickname" class="form-control"></div>
+      <div class="mb-3"><label>密码</label><input type="password" name="password" class="form-control" required minlength="6" id="pwd1"></div>
+      <div class="mb-3"><label>确认密码</label><input type="password" name="password2" class="form-control" required id="pwd2"></div>
+      <button type="submit" class="btn btn-primary w-100">注册</button>
+    </form>
+    <p class="mt-3 text-center small"><a href="{% url 'login' %}">已有账号？登录</a></p>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+document.getElementById('registerForm')?.addEventListener('submit', function(e) {
+  if (document.getElementById('pwd1').value !== document.getElementById('pwd2').value) {
+    e.preventDefault(); alert('两次密码不一致');
+  }
+});
+</script>
+{% endblock %}

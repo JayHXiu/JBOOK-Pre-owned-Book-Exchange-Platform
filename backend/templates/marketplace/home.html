@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}首页 - JBOOK{% endblock %}
+{% block content %}
+<div class="container">
+  <div id="homeCarousel" class="carousel slide mb-4 rounded-3 overflow-hidden shadow-sm" data-bs-ride="carousel">
+    <div class="carousel-inner">
+      {% for slide in carousel_slides %}
+      <div class="carousel-item {% if forloop.first %}active{% endif %}">
+        <div class="carousel-caption-bg p-5 text-white">
+          <h2>{{ slide.title }}</h2>
+          <p>{{ slide.text }}</p>
+          <a href="{% url 'book_list' %}" class="btn btn-light">进入书市</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#homeCarousel" data-bs-slide="prev"><span class="carousel-control-prev-icon"></span></button>
+    <button class="carousel-control-next" type="button" data-bs-target="#homeCarousel" data-bs-slide="next"><span class="carousel-control-next-icon"></span></button>
+  </div>
+
+  <div class="mb-4">
+    <h5 class="section-title">品类入口</h5>
+    <div class="d-flex flex-wrap gap-2">
+      {% for c in root_categories %}
+      <a class="btn btn-outline-primary btn-sm" href="{% url 'book_list' %}?cat_id={{ c.cat_id }}">{{ c.cat_name }}</a>
+      {% endfor %}
+    </div>
+  </div>
+
+  <section class="mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h4 class="section-title mb-0">热门推荐</h4>
+      <a href="{% url 'book_list' %}?sort=-view_count">更多</a>
+    </div>
+    <div class="row g-3">
+      {% for sell in hot_books %}{% include 'partials/book_card.html' %}{% empty %}
+      <div class="empty-state"><p>暂无图书</p></div>{% endfor %}
+    </div>
+  </section>
+
+  {% if rec_books %}
+  <section class="mb-5">
+    <h4 class="section-title">为你推荐</h4>
+    <div class="row g-3">
+      {% for sell in rec_books %}{% include 'partials/book_card.html' %}{% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  <section class="mb-5">
+    <h4 class="section-title">最新上架</h4>
+    <div class="row g-3">
+      {% for sell in latest_books %}{% include 'partials/book_card.html' %}{% endfor %}
+    </div>
+  </section>
+
+  <section class="mb-5">
+    <h4 class="section-title">低价好书</h4>
+    <div class="row g-3">
+      {% for sell in low_price_books %}{% include 'partials/book_card.html' %}{% endfor %}
+    </div>
+  </section>
+</div>
+{% endblock %}

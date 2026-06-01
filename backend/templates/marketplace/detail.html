@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ sell.book.book_name }} - JBOOK{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="row g-4">
+    <div class="col-lg-5">
+      <div class="detail-cover card">
+        {% if sell.cover_img %}
+        <img src="{{ sell.cover_img }}" class="w-100 rounded lazy-img" alt="" loading="lazy">
+        {% else %}
+        <div class="book-cover-placeholder detail-placeholder"><i class="fa-solid fa-book fa-4x"></i></div>
+        {% endif %}
+      </div>
+    </div>
+    <div class="col-lg-7">
+      <h2>{{ sell.book.book_name }}</h2>
+      <p class="text-muted">{{ sell.book.author }} · {{ sell.book.publisher }} · {{ sell.book.pub_year }}</p>
+      <div class="mb-2">
+        <span class="badge bg-light text-dark me-1">ISBN {{ sell.book.isbn }}</span>
+        <span class="badge bg-light text-dark me-1">{{ sell.book.category.cat_name }}</span>
+        <span class="badge bg-info text-dark">折价率 {{ sell.discount_rate }}</span>
+      </div>
+      <h3 class="text-danger">¥{{ sell.second_price }} <small class="text-muted fs-6 text-decoration-line-through">原价 ¥{{ sell.book.original_price }}</small></h3>
+      <p>成色 {% include 'partials/quality_badge.html' with q=sell.quality %} · 浏览 {{ sell.view_count }} · 收藏 {{ sell.collect_count }}</p>
+
+      <div class="card bg-light border-0 p-3 mb-3">
+        <h6><i class="fa-solid fa-robot"></i> 智能估价</h6>
+        <p class="mb-0">AI 参考价约 <strong class="text-primary">¥{{ suggested_price }}</strong>（基于类目、原价、成色等特征）</p>
+      </div>
+
+      <div class="card p-3 mb-3">
+        <h6>卖家</h6>
+        <p class="mb-0">{{ sell.user.nickname }} (@{{ sell.user.username }})</p>
+      </div>
+
+      <div class="d-flex gap-2 flex-wrap">
+        {% if request.session.user_id %}
+        <a href="{% url 'collect_toggle' sell.sell_id %}" class="btn btn-outline-primary">{% if collected %}取消收藏{% else %}收藏{% endif %}</a>
+        <a href="{% url 'message_send' sell.sell_id %}" class="btn btn-outline-secondary">咨询</a>
+        <a href="{% url 'order_create' sell.sell_id %}" class="btn btn-primary">下单</a>
+        {% if request.session.user_id == sell.user_id %}
+        <a href="{% url 'sell_edit' sell.sell_id %}" class="btn btn-light">编辑</a>
+        {% endif %}
+        {% else %}
+        <a href="{% url 'login' %}" class="btn btn-primary">登录后购买</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="card mt-4 p-4">
+    <h5>图书详情</h5>
+    <div class="book-desc">{{ sell.book.book_desc|linebreaksbr|default:"暂无详细介绍" }}</div>
+  </div>
+
+  {% if browse_history %}
+  <section class="mt-4">
+    <h5>浏览记录</h5>
+    <div class="row g-2">
+      {% for h in browse_history %}
+      <div class="col-md-4"><a href="{% url 'book_detail' h.sell.sell_id %}" class="small">{{ h.sell.book.book_name }}</a></div>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  <section class="mt-4">
+    <h5>猜你喜欢</h5>
+    <div class="row g-3">
+      {% for sell in guess_like %}{% include 'partials/book_card.html' %}{% endfor %}
+    </div>
+  </section>
+</div>
+{% endblock %}

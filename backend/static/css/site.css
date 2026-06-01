@@ -1,0 +1,100 @@
+:root {
+  --brand: #2563eb;
+  --brand-light: #dbeafe;
+  --accent: #059669;
+  --bg: #f8fafc;
+  --text-muted: #64748b;
+  --radius: 12px;
+}
+body { background: var(--bg); font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; }
+.navbar-brand { letter-spacing: 0.05em; }
+.carousel-caption-bg {
+  background: linear-gradient(135deg, #2563eb 0%, #059669 100%);
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.section-title { font-weight: 700; color: #1e293b; }
+.book-card {
+  border: none;
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,.08);
+}
+.book-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(37,99,235,.15); }
+.book-cover-wrap { position: relative; background: #e2e8f0; height: 180px; }
+.book-cover, .book-cover-placeholder { height: 180px; object-fit: cover; width: 100%; }
+.book-cover-placeholder, .detail-placeholder {
+  display: flex; align-items: center; justify-content: center;
+  color: #94a3b8; background: linear-gradient(180deg,#f1f5f9,#e2e8f0);
+}
+.price-main { color: #dc2626; font-weight: 700; font-size: 1.1rem; }
+.quality-badge { color: #f59e0b; font-size: 0.75rem; }
+.status-pill {
+  position: absolute; top: 8px; right: 8px;
+  font-size: 0.7rem; padding: 2px 8px; border-radius: 999px;
+}
+.status-on { background: #d1fae5; color: #065f46; }
+.filter-panel { border-radius: var(--radius); border: none; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+.metric-card {
+  background: #fff; border-radius: var(--radius);
+  padding: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,.06);
+  border-left: 4px solid var(--brand);
+}
+.chart-box { height: 380px; background: #fff; border-radius: var(--radius); padding: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+.empty-state {
+  text-align: center; padding: 3rem; color: var(--text-muted);
+  background: #fff; border-radius: var(--radius);
+}
+.search-suggest {
+  position: absolute; top: 100%; left: 0; right: 0; z-index: 1050;
+  background: #fff; border: 1px solid #e2e8f0; border-radius: 8px;
+  max-height: 240px; overflow-y: auto; box-shadow: 0 8px 16px rgba(0,0,0,.1);
+}
+.search-suggest a {
+  display: block; padding: 8px 12px; text-decoration: none; color: #334155;
+}
+.search-suggest a:hover { background: var(--brand-light); }
+.img-preview { max-height: 160px; border-radius: 8px; }
+.site-footer { background: #fff; border-top: 1px solid #e2e8f0; }
+.site-footer a { color: var(--brand); text-decoration: none; }
+.chat-layout { min-height: 480px; }
+.chat-threads { max-height: 520px; overflow-y: auto; }
+.chat-thread-item {
+  padding: 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer;
+  transition: background 0.15s;
+}
+.chat-thread-item:hover, .chat-thread-item.active { background: var(--brand-light); }
+.chat-messages { height: 400px; overflow-y: auto; background: #f8fafc; padding: 1rem; border-radius: 8px; }
+.chat-bubble {
+  max-width: 75%; padding: 8px 12px; border-radius: 12px; margin-bottom: 8px;
+}
+.chat-bubble.me { background: var(--brand); color: #fff; margin-left: auto; }
+.chat-bubble.other { background: #fff; border: 1px solid #e2e8f0; }
+.order-status-0 { background: #fef3c7; color: #92400e; }
+.order-status-1 { background: #dbeafe; color: #1e40af; }
+.order-status-2 { background: #e0e7ff; color: #3730a3; }
+.order-status-3 { background: #d1fae5; color: #065f46; }
+.anomaly-row { background: #fef2f2 !important; }
+.toast-host { position: fixed; top: 80px; right: 16px; z-index: 2000; }
+.lazy-img { opacity: 0; transition: opacity 0.3s; }
+.lazy-img.loaded { opacity: 1; }
+@media (max-width: 768px) {
+  .chart-box { height: 280px; }
+}
+/* 模型分析模块 */
+.ml-analysis-page .ml-summary-card { border-left: 4px solid var(--brand); }
+.ml-analysis-page .chart-sm { height: 260px; }
+.ml-analysis-page .lite-dim-bars .progress-bar { background: var(--brand); }
+.ml-analysis-page .pro-step-card {
+  background: #f8fafc; border-radius: var(--radius); border: 1px solid #e2e8f0;
+}
+.ml-analysis-page .pro-step-num {
+  width: 28px; height: 28px; border-radius: 50%; background: var(--brand);
+  color: #fff; display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem;
+}
+.ml-analysis-page details summary { cursor: pointer; user-select: none; }
+.ml-analysis-page .view-switch .btn { min-width: 88px; }

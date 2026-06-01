@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# Django
+backend/db.sqlite3
+backend/media/
+backend/.env
+*.log
+
+# Virtual env
+backend/venv/
+
+# Java legacy artifacts
+backend/target/
+
+# Book-Crossing raw CSV (~115MB, download via data/book_crossing/download.py)
+data/book_crossing/raw/*.csv
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db

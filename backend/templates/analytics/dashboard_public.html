@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}数据看板 - JBOOK{% endblock %}
+{% block content %}
+<div class="container-fluid px-lg-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+    <h3 class="mb-0">JBOOK 数据概览</h3>
+    <div class="d-flex gap-2">
+      <select id="filterDays" class="form-select form-select-sm" style="width:100px">
+        <option value="7" {% if days == '7' %}selected{% endif %}>7天</option>
+        <option value="30" {% if days == '30' or not days %}selected{% endif %}>30天</option>
+        <option value="90" {% if days == '90' %}selected{% endif %}>90天</option>
+      </select>
+      <select id="filterCat" class="form-select form-select-sm" style="width:140px">
+        <option value="">全部类目</option>
+        {% for c in categories %}
+        <option value="{{ c.cat_id }}" {% if cat_id == c.cat_id|stringformat:"s" %}selected{% endif %}>{{ c.cat_name }}</option>
+        {% endfor %}
+      </select>
+      <button class="btn btn-primary btn-sm" onclick="refreshDashboard(false)">刷新</button>
+    </div>
+  </div>
+  <div class="row g-3 mb-4">
+    <div class="col-md-3"><div class="metric-card"><div class="text-muted small">注册用户</div><div class="fs-3 fw-bold">{{ overview.total_users }}</div></div></div>
+    <div class="col-md-3"><div class="metric-card"><div class="text-muted small">在售图书</div><div class="fs-3 fw-bold">{{ overview.on_sale }}</div></div></div>
+    <div class="col-md-3"><div class="metric-card"><div class="text-muted small">累计订单</div><div class="fs-3 fw-bold">{{ overview.orders_done }}</div></div></div>
+    <div class="col-md-3"><div class="metric-card"><div class="text-muted small">今日浏览</div><div class="fs-3 fw-bold">{{ overview.views_today }}</div></div></div>
+  </div>
+  <div class="row g-3">
+    <div class="col-md-6"><div id="chartCategoryPie" class="chart-box"></div></div>
+    <div class="col-md-6"><div id="chartCategoryBar" class="chart-box"></div></div>
+    <div class="col-md-6"><div id="chartPriceHist" class="chart-box"></div></div>
+    <div class="col-12"><div id="chartTrend" class="chart-box"></div></div>
+    <div class="col-md-6"><div id="chartFunnel" class="chart-box"></div></div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="{% static 'js/dashboard.js' %}"></script>
+<script>initDashboard({{ chart_data|safe }}, false);</script>
+{% endblock %}

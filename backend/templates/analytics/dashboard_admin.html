@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}运营看板 - JBOOK{% endblock %}
+{% block content %}
+<div class="container-fluid px-lg-4">
+  <div class="d-flex flex-wrap justify-content-between mb-4 gap-2">
+    <h3 class="mb-0">JBOOK 运营看板</h3>
+    <div class="d-flex gap-2">
+      <select id="filterDays" class="form-select form-select-sm" style="width:100px">
+        <option value="30" selected>30天</option>
+        <option value="7">7天</option>
+        <option value="90">90天</option>
+      </select>
+      <select id="filterCat" class="form-select form-select-sm" style="width:140px">
+        <option value="">全部类目</option>
+        {% for c in categories %}<option value="{{ c.cat_id }}">{{ c.cat_name }}</option>{% endfor %}
+      </select>
+      <button class="btn btn-primary btn-sm" onclick="refreshDashboard(true)">联动刷新</button>
+      <a href="{% url 'admin_manage' %}" class="btn btn-outline-secondary btn-sm">后台管理</a>
+    </div>
+  </div>
+  <div class="row g-3 mb-3">
+    <div class="col"><div class="metric-card"><small>用户</small><div class="fs-4 fw-bold">{{ overview.total_users }}</div></div></div>
+    <div class="col"><div class="metric-card"><small>在售</small><div class="fs-4 fw-bold">{{ overview.on_sale }}</div></div></div>
+    <div class="col"><div class="metric-card"><small>成交</small><div class="fs-4 fw-bold">{{ overview.orders_done }}</div></div></div>
+    <div class="col"><div class="metric-card"><small>今日浏览</small><div class="fs-4 fw-bold">{{ overview.views_today }}</div></div></div>
+  </div>
+  <div class="row g-3">
+    <div class="col-lg-8"><div id="chartTrend" class="chart-box"></div></div>
+    <div class="col-lg-4"><div id="chartDualAxis" class="chart-box"></div></div>
+    <div class="col-lg-6"><div id="chartHeatmap" class="chart-box"></div></div>
+    <div class="col-lg-6"><div id="chartFunnel" class="chart-box"></div></div>
+    <div class="col-12"><div id="chartStack" class="chart-box"></div></div>
+    <div class="col-lg-6"><div id="chartCategoryPie" class="chart-box"></div></div>
+    <div class="col-lg-6"><div id="chartPriceHist" class="chart-box"></div></div>
+  </div>
+  <div class="row g-4 mt-2">
+    <div class="col-lg-6">
+      <div class="card p-3">
+        <h6 class="text-danger">异常高价 / 滞销</h6>
+        <div class="table-responsive">
+          <table class="table table-sm">
+            <tbody>
+              {% for s in anomaly_high %}
+              <tr class="anomaly-row"><td>{{ s.book.book_name }}</td><td>¥{{ s.second_price }}</td><td>{{ s.view_count }} 浏览</td></tr>
+              {% empty %}<tr><td colspan="3" class="text-muted">无</td></tr>{% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="card p-3">
+        <h6>零浏览商品</h6>
+        <ul class="list-unstyled mb-0">
+          {% for s in anomaly_zero %}<li>{{ s.book.book_name }}</li>{% empty %}<li class="text-muted">无</li>{% endfor %}
+        </ul>
+      </div>
+    </div>
+    <div class="col-12">
+      <div class="card p-3">
+        <h6>待审核</h6>
+        <table class="table table-sm">
+          {% for s in pending_audit %}
+          <tr>
+            <td>{{ s.book.book_name }}</td><td>{{ s.user.username }}</td>
+            <td>
+              <form method="post" action="{% url 'audit_sell' s.sell_id %}" class="d-inline">{% csrf_token %}
+                <button name="action" value="pass" class="btn btn-sm btn-success">通过</button>
+                <button name="action" value="reject" class="btn btn-sm btn-danger">驳回</button>
+              </form>
+            </td>
+          </tr>
+          {% empty %}<tr><td colspan="3">无待审</td></tr>{% endfor %}
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="{% static 'js/dashboard.js' %}"></script>
+<script>initDashboard({{ chart_data|safe }}, true);</script>
+{% endblock %}
