@@ -122,4 +122,4 @@ ML_MODEL_DIR.mkdir(parents=True, exist_ok=True)
 (DATA_DIR / 'cleaned').mkdir(parents=True, exist_ok=True)
 REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 
-CSRF_TRUSTED_ORIGINS = ["*"]
+CSRF_TRUSTED_ORIGINS = ["https://*","http://*"]
