@@ -14,8 +14,6 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'ds-booktrade-dev-key-change-in-prod
 
 DEBUG = os.getenv('DEBUG', 'True').lower() in ('1', 'true', 'yes')
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -122,4 +120,10 @@ ML_MODEL_DIR.mkdir(parents=True, exist_ok=True)
 (DATA_DIR / 'cleaned').mkdir(parents=True, exist_ok=True)
 REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 
-CSRF_TRUSTED_ORIGINS = ["https://*","http://*"]
+CSRF_TRUSTED_ORIGINS = [
+    "https://jbook.up.railway.app",
+]
+
+ALLOWED_HOSTS = [
+    "jbook.up.railway.app",
+]
