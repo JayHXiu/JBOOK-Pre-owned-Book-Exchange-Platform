@@ -1,11 +1,14 @@
-FROM maven:3.8-openjdk-17 AS build
-# 复制整个项目到容器
-COPY . /source
-# 进入backend目录（pom在这里）
-WORKDIR /source/backend
-RUN mvn clean package -DskipTests
+FROM python:3.11-slim
 
-FROM eclipse-temurin:17-jre-alpine
-COPY --from=build /source/backend/target/*.jar app.jar
-EXPOSE 8080
-CMD ["java","-jar","app.jar"]
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+COPY . .
+
+RUN python manage.py collectstatic --noinput
+
+EXPOSE 8000
+
+CMD gunicorn booktrade.wsgi:application --bind 0.0.0.0:$PORT
