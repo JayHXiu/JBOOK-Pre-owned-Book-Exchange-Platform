@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 from decimal import Decimal
+import os
 
 import pandas as pd
+from sqlalchemy import create_engine
 from django.db import connection
 
 from marketplace.data.book_crossing import (
@@ -36,6 +38,11 @@ def bx_pg_tables_ready() -> bool:
 
 class PgBookCrossingImporter(BookCrossingImporter):
     """复用 BookCrossingImporter 入库逻辑，数据源改为 PostgreSQL BX 表。"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # 创建 SQLAlchemy 引擎供 pandas 使用
+        self._engine = create_engine(os.getenv('DATABASE_URL'))
 
     def run(self):
         from accounts.models import User
@@ -79,7 +86,8 @@ class PgBookCrossingImporter(BookCrossingImporter):
             FROM book b
             INNER JOIN top_isbn t ON b.isbn = t.isbn
         """
-        df = pd.read_sql(sql, connection, params={'limit': self.max_books})
+        # 改用 SQLAlchemy 引擎
+        df = pd.read_sql(sql, self._engine, params={'limit': self.max_books})
         df = df.rename(columns={
             'booktitle': 'title',
             'bookauthor': 'author',
@@ -100,7 +108,8 @@ class PgBookCrossingImporter(BookCrossingImporter):
         sql = """
             SELECT userid, location, age FROM users LIMIT %(limit)s
         """
-        df = pd.read_sql(sql, connection, params={'limit': self.max_users * 3})
+        # 改用 SQLAlchemy 引擎
+        df = pd.read_sql(sql, self._engine, params={'limit': self.max_users * 3})
         df = df.rename(columns={'userid': 'bx_uid'})
         df['bx_uid'] = df['bx_uid'].astype(str).str.strip()
         df['age'] = pd.to_numeric(df['age'], errors='coerce')
@@ -113,7 +122,8 @@ class PgBookCrossingImporter(BookCrossingImporter):
         sql = """
             SELECT userid, isbn, bookrating FROM ratings LIMIT %(limit)s
         """
-        df = pd.read_sql(sql, connection, params={'limit': self.max_ratings * 5})
+        # 改用 SQLAlchemy 引擎
+        df = pd.read_sql(sql, self._engine, params={'limit': self.max_ratings * 5})
         df = df[df['isbn'].map(_norm_isbn).isin(valid_isbn)]
         df = df.rename(columns={
             'userid': 'bx_uid',
