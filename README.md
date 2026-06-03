@@ -171,6 +171,20 @@ JBOOK/
 
 ---
 
+## Railway 部署（PostgreSQL + 一键建站）
+
+完整步骤见 **[docs/RAILWAY_DEPLOY.md](docs/RAILWAY_DEPLOY.md)**。
+
+简要流程：
+
+1. Railway 添加 PostgreSQL + Web 服务（Root Directory = `backend`）
+2. Web 服务配置 `DATABASE_URL` 等环境变量（见 `backend/.env.example`）
+3. 本地 `load_bx.py` 把 CSV 写入 PG 表 `book/users/ratings`（可选，已在 PG 可跳过）
+4. **关键**：`python manage.py bootstrap_jbook --source pg --force` 同步到 `sell_book` 等业务表
+5. 部署后访问站点，首页应显示图书
+
+---
+
 ## MySQL 部署（可选）
 
 1. 复制 `backend/.env.example` 为 `backend/.env`：
